@@ -1,5 +1,5 @@
 # CHANGE-TO-YOURNAME-aws-node-http-api-project
-service: priya-secret-management-Package
+service: priya-secret-management-Package-scanning
 frameworkVersion: '3'
 
 provider:
@@ -17,7 +17,7 @@ functions:
           path: /
           method: get
     environment :
-        ACCESS_INFORMATION :'34234'
+       # ACCESS_INFORMATION :'34234'
         ACCESS_KEY: ${ssm:ACCESS_KEY}
 plugins:
   - serverless-offline
