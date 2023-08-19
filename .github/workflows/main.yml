@@ -19,6 +19,7 @@ jobs:
         uses: actions/checkout@v3
       - name: Run installation of dependencies commands
         run: npm install
+
   unit-testing:
     runs-on: ubuntu-latest
     needs: install-dependencies
@@ -27,27 +28,37 @@ jobs:
         uses: actions/checkout@v3
       - name: Run installation of dependencies commands
         run: npm install
-      - name: Run audit
-        run : npm audit
-        
-  deploy:
-    name: deploy
+      - name: Run unit testing command
+        run: npm test
+   package-scan:
     runs-on: ubuntu-latest
     needs: unit-testing
     steps:
-    - uses: actions/checkout@v3
-    - name: Use Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@v3
-      with:
+      - name: Check out repository code
+        uses: actions/checkout@v3
+      - name: Run installation of dependencies commands
+        run: npm install
+      - name: Run audit
+        run: npm audit      
+        
+  deploy:
+      - name: deploy
+        runs-on: ubuntu-latest
+        needs: package-scan
+        steps:
+      - uses: actions/checkout@v3
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v3
+        with:
         node-version: ${{ matrix.node-version }}
-    - run: npm ci
-    - name: serverless deploy
-      uses: serverless/github-action@v3.2
-      with:
-        args: deploy
-      env:
-        AWS_ACCESS_KEY_ID:  ${{ secrets.AWS_ACCESS_KEY_ID }}
-        AWS_SECRET_ACCESS_KEY:  ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      - run: npm ci
+      - name: serverless-deploy
+        uses: serverless/github-action@v3.2
+        with:
+          args: deploy
+        env:
+          AWS_ACCESS_KEY_ID:  ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY:  ${{ secrets.AWS_SECRET_ACCESS_KEY }}
 
 
 
